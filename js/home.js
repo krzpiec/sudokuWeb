@@ -85,4 +85,4 @@ function handleTileFocus(e){
     this.focus();
 }
 
-window.onload(handleBoxClick(null))//zle ale dziala xD
+window.onload(handleBoxClick(null))//z bledem ale jakos sie wykonuje
