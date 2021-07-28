@@ -16,7 +16,7 @@ tiles.forEach(tile => tile.addEventListener('transitioned', endOfTileTransition)
 boxes.forEach(box => box.addEventListener('click', handleBoxClick));
 const columns = 9;
 const N = 9;
-
+howManyEmptyCelss = [40, 48, 54, 0];
 let hours = 0;
 let minutes = 0;
 let seconds = 0;
@@ -240,6 +240,7 @@ const sudokuBacktracker = (row,col) =>{
 
 }
 const clearSudoku = () =>{
+    clearFinalArr();
     for(let i =0; i<tiles.length; i++)
     {
         tiles[i].innerHTML = "";
@@ -333,28 +334,89 @@ for(let i = 0; i < 9; i++)
 
 }
 
+const removeCellFromOneBox = (n, x ,y) =>{
+
+    let indexes = new Array(9).fill(0);
+    for(let i=0; i<n; i++)
+    {
+        indexes[i] = 1;
+    }
+    indexes = indexes.sort(() => Math.random() - 0.5);
+    let counter = 0;
+
+    for(let i=0; i<3; i++)
+    {
+        for(let j = 0; j<3; j++)
+        {
+            if(indexes[counter] === 1)
+            {
+                finalArr[x+i][y+j] = 0;
+            }
+            counter++;
+        }
+    }
+}
+
+const removeCellsFromBoxes = (n) =>{
+    let counter = 0;
+    for(let i=0; i<=6; i+=3)
+    {
+        for(let j=0; j<=6; j+=3)
+        {
+            removeCellFromOneBox(n,i,j);
+        }
+    }
+
+    }
+
+const removeExtraCells = (n) =>{
+    for(let i=0; i<9; i++)
+    {
+        let counterRow = 0;
+        let counterColumn = 0;
+        for(let j=0; j<9; j++)
+        {
+            if(finalArr[i][j] !== 0)
+            {
+                counterRow++;
+            }
+            if(finalArr[j][i] !== 0)
+            {
+                counterColumn++;
+            }
+        }
+        if(counterRow === 9)
+        {
+            let radnomIndex = (Math.random() * (8 - 0 + 1) ) << 0
+            finalArr[i][radnomIndex] = 0;
+        }
+        if(counterColumn === 9)
+        {
+            let radnomIndex = (Math.random() * (8 - 0 + 1) ) << 0
+            finalArr[radnomIndex][i] = 0;
+        }
+    }
+
+}
+
 const generateSudokuPuzzle = () =>{
     generateCompleteSudoku();
 
-    let indexes = new Array(81);
-    for(let i=0; i<81; i++)
-    {
-        indexes[i]=i;
-    }
-
-    indexes = indexes.sort(() => Math.random() - 0.5);
-let range = diffSelector.value*15;
-if(diffSelector.value == 4)
-{
-    range = 0; 
-}
-    for(let i=0; i<range; i++)
-    {
-        finalArr[Math.floor(indexes[i]/9)][indexes[i]%9] = 0;
-    }
     
-    solveBoard(finalArr, 0,0 );
-    console.log(solutions);
+    let range = howManyEmptyCelss[diffSelector.value-1];
+    let cellPerBox = Math.floor(range/9);
+    let extraCells = range%9;
+    let randomNumber = Math.floor(Math.random() * (9 - 0 + 1)) + 0;
+    removeCellsFromBoxes(cellPerBox);
+    removeExtraCells(extraCells);
+
+    // for(let i=0; i<range; i++)
+    // {
+    //     finalArr[Math.floor(indexes[i]/9)][indexes[i]%9] = 0;
+    // }
+    
+   //    solveBoard(finalArr, 0,0 );
+
 
 }
 
@@ -443,7 +505,7 @@ for(let i=0; i<9; i++)
         for(let k=j+1; k<9; k++)
         {
 
-            
+           
             if(finalArr[i][j] === 0 || finalArr[i][k] === 0)
             {
                 emptyCellCounter++;
@@ -452,25 +514,32 @@ for(let i=0; i<9; i++)
 
             if(finalArr[i][j] === finalArr[i][k])
             {
-                console.log(i,j,k); 
+                wholeBoardErrorsArray[i][j]++;
+                wholeBoardErrorsArray[i][k]++;
+            }
+           
+
+            // if(finalArr[i][j] === finalArr[i][k])
+            // {
+            //     console.log(i,j,k); 
                
-                errorsCounter++;
-                errorsArray[finalArr[i][j]]++;
-                applyErrorToCells(i,j);
-                applyErrorToCells(i,k);
-            }
-            else
-            {
+            //     errorsCounter++;
+            //     errorsArray[finalArr[i][j]]++;
+            //     applyErrorToCells(i,j);
+            //     applyErrorToCells(i,k);
+            // }
+            // else
+            // {
                 
-                if(errorsArray[finalArr[i][j]] === 0)
-                {
-                    removeErrorToCells(i,j);
-                }
-                if(errorsArray[finalArr[i][k]] === 0)
-                {
-                    removeErrorToCells(i,k);
-                }            
-            }
+            //     if(errorsArray[finalArr[i][j]] === 0)
+            //     {
+            //         removeErrorToCells(i,j);
+            //     }
+            //     if(errorsArray[finalArr[i][k]] === 0)
+            //     {
+            //         removeErrorToCells(i,k);
+            //     }            
+            // }
         {
         }
         }
@@ -495,29 +564,15 @@ for(let i=0; i<9; i++)
                 emptyCellCounter++;
                 continue;
             }
-
             if(finalArr[j][i] === finalArr[k][i])
             {
-                console.log(i,j,k); 
-                errorsCounter++;
-                errorsArray[finalArr[j][i]]++;
-                applyErrorToCells(j,i);
-                applyErrorToCells(k,i);
+                console.log(finalArr);
+                console.log(i,j,k);
+                wholeBoardErrorsArray[j][i]++;
+                wholeBoardErrorsArray[k][i]++;
             }
-            else
-            {
-                
-                if(errorsArray[finalArr[j][i]] === 0)
-                {
-                    removeErrorToCells(j,i);
-                }
-                if(errorsArray[finalArr[k][i]] === 0)
-                {
-                    removeErrorToCells(k,i);
-                }            
-            }
-        {
-        }
+           
+       
         }
         
        
@@ -533,7 +588,7 @@ boxes.forEach(box => {
     let arr = new Array(10).fill(0);
     let boxTiles = box.childNodes;
     let errorsArray = new Array(10).fill(0);
-    console.log(boxTiles);
+
     for(let i=0; i<boxTiles.length; i++)
     {
         if(i%2==0)
@@ -562,28 +617,23 @@ boxes.forEach(box => {
             let indexJ = boxTiles[j].getAttribute("id");
             let x1 = Math.floor(indexJ/9);
             let y2 = indexJ%9;
+            let y = indexI%9;
+        if(finalArr[x1][y2] === 0)
+        {
+            emptyCellCounter++;
+            continue;
+        }
             if(finalArr[x][y] === finalArr[x1][y2])
             {
-                errorsCounter++;
-                errorsArray[finalArr[x][y]]++;
-                applyErrorToCells(x,y);
-                applyErrorToCells(x1,y2);
-            }
-            else
-            {
+               
+                wholeBoardErrorsArray[x][y]++;
+                wholeBoardErrorsArray[x1][y2]++;
                 
-                if(errorsArray[finalArr[x][y]] === 0)
-                {
-                    // removeErrorToCells(x,y);
-                }
-                if(errorsArray[finalArr[x1][y2]] === 0)
-                {
-                    // removeErrorToCells(x1,y2);
-                }            
+            }    
             }
 
             
-        }
+        
     }
     // tiles.forEach(tile => {
     //     if(parseInt(tile.id) >= rangeMin && parseInt(tile.id)<rangeMax && tile.innerHTML !== ""){
@@ -613,17 +663,30 @@ boxes.forEach(box => {
     // });
     
 });
-console.log(errorsCounter, emptyCellCounter, finalArr);
+for(let i=0; i<wholeBoardErrorsArray.length; i++)
+{
+    for(let j=0; j<wholeBoardErrorsArray[i].length; j++)
+    {
+        if(wholeBoardErrorsArray[i][j] !== 0)
+        {
+            errorsCounter++;
+            applyErrorToCells(i,j);
+        }
+        else
+        {
+            removeErrorToCells(i,j);
+        }
+    }
+}
+
+
 if(errorsCounter ===0 && emptyCellCounter === 0)
 {
    endOfRun();
 }
 }
 
-
-const endOfRun = () =>{
-    runEndTileAnimation();
-    stopTimer();
+const clearFinalArr = () =>{
     for(let i=0; i<9; i++)
     {
         for(let j=0; j<9;j++)
@@ -631,6 +694,12 @@ const endOfRun = () =>{
             finalArr[i][j] = 0;
         }
     }
+}
+
+const endOfRun = () =>{
+    runEndTileAnimation();
+    stopTimer();
+   clearFinalArr();
 }
 
 function handleBoxClick(e){
@@ -671,7 +740,7 @@ const runCompleted = () => {
 }
 
 const stopAnimation = () => {
-    console.log('stopAnimation');
+
     clearInterval(intervalID);
     counter=0;
 }
@@ -719,7 +788,6 @@ function handleTileInput(e){
         }
         else
         {
-
             let arrCount = new Array(9).fill(0);
             for(let i=0; i<9; i++)
             {
@@ -769,6 +837,29 @@ const stopTimer = () =>{
     timerInterval = null;
 }
 
+const updateTimerText = () =>{
+    timerHours.innerHTML = "";
+    timerMinutes.innerHTML = "";
+    timerSeconds.innerHTML = "";
+    
+    if(hours<10)
+    {
+        timerHours.innerHTML+="0";
+    }
+    timerHours.innerHTML += hours;
+    if(minutes<10)
+    {
+        timerMinutes.innerHTML+="0";
+    }
+    timerMinutes.innerHTML += minutes;
+    if(seconds<10)
+    {
+        timerSeconds.innerHTML+="0";
+    }
+    timerSeconds.innerHTML += seconds;
+    }
+
+
 const updateTimer = () =>{
 seconds++;
 if(seconds === 60)
@@ -782,10 +873,7 @@ if(seconds === 60)
     }
     
 }
-
-timerHours.innerHTML = hours;
-timerMinutes.innerHTML = minutes;
-timerSeconds.innerHTML = seconds;
+updateTimerText();
 }
 
 window.onload = setUp;

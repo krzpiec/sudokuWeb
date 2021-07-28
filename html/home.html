@@ -7,12 +7,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Przyciski</title>
 </head>
-<body>
+<body style="background: radial-gradient(white , #151320);">
 
 <div class="menu">
-<h1 class="title">FAJNA GIERA</h1>
+<h1 class="title">Sudoku :))</h1>
 </div>
-
+<div class="time">
+    <span id ="hour" >00</span>:
+    <span id ="minutes" >00</span>:
+    <span id ="seconds" >00</span>
+</div>
 <div class="game">
 <div class="checkmarkContainer transparent">
     <img src="../imgs/checkmark2.png"  class ="checkmarkImg" alt="Nie zaladowano checkmarka">
@@ -128,35 +132,39 @@
         </div>
 
 
-
+        <div class="optionsMenu">
+ 
+            <div class="select-diff">
+            <select id="difficulty">
+            <option value="1">Easy</option>
+            <option value="2">Medium</option>
+            <option value="3">Hard</option>
+            <option value="4">Debug</option>
+            </select>
+            <span class="custom-arrow"></span>
+            </div>   
+            <div class ="new-game-button" onclick="newGame()">Nowa gra</div>
+          
+          </div>
     </div>
-
+    
+        
 
    
-</div> 
-<button onclick="newGame()">Nowa gra</button>
-  <div class="select-diff">
-<select id="difficulty">
-<option value="1">Easy</option>
-<option value="2">Medium</option>
-<option value="3">Hard</option>
-<option value="4">Debug</option>
-</select>
-<span class="custom-arrow"></span>
-  </div>
+</div>
+
 <div class="switch-to-pencil">
     <div class="pencil-text">Pencil</div>
     <label class="switch" >
-        <input type="checkbox" id="penSwitcher"  onclick="changePen()">
+        <input type="checkbox" id="penSwitcher"  checked = "true" onclick="changePen()">
         <span class="slider"></span>
       </label>
 <div class="pen-text">Pen</div>
 </div>
-   <div class="time">
-       <span id ="hour" >00</span>:
-       <span id ="minutes" >00</span>:
-       <span id ="seconds" >00</span>
-   </div>
+
+
+
+
     <script type="text/javascript" src="../js/home.js"></script>
 </body>
 </html>
